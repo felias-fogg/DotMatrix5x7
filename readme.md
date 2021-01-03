@@ -26,10 +26,10 @@ This library has been written for 5x7 dot matrix displays. 12 Arduino pins are n
 	{
 		Dot5x7.begin(0, 1, 2, 3, 4,         // column pins
 		             5, 6, 7, 8, 9, 10, 11, // row pins
-		             LOW,                   // value when row pin is active (default value)
+					 LOW,                   // value when row pin is active (default value)
 					 HIGH);                 // value when column pin is active (default value)
 	    Dot5x7.setUpsideDown(true);         // display all chars upside down
-		Dot5x7.setFramesPerSecond(50);      // display 50 frames per second (default value)			 
+	    Dot5x7.setFramesPerSecond(50);      // display 50 frames per second (default value)			 
 	}	 
 
 	void loop()
