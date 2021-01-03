@@ -14,7 +14,9 @@
 class DotMatrix5x7 {
  public:
   void begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
-	    byte row4, byte row5, byte row6, byte row7);
+	     byte row4, byte row5, byte row6, byte row7);
+  void begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
+	     byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive);
   void clear(void);
   void show(byte c);
   void showString(const char str[], int ontime, int offtime);
@@ -43,6 +45,8 @@ class DotMatrix5x7 {
   byte _rowpin[NUMROWS];
   byte _colpin[NUMCOLS];
   byte *_font;
+  byte _rowactive = LOW;
+  byte _columnactive = HIGH;
   volatile byte _row[NUMROWS];
   volatile byte _currrow = 0;
   volatile bool _blocked = false;

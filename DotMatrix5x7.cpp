@@ -1,16 +1,16 @@
 // -*- c++ -*-
-/* Class to drive a 5x7 dot matrix display with common anode 
+/* Class to drive a 5x7 dot matrix display 
    using timer1.
 */
 
-#include <DotMatrix5x7.h>
 #include <TimerOne.h>
 #include <dotfont5x7.h>
+#include <DotMatrix5x7.h>
 
 DotMatrix5x7 Dot5x7; //preinstantiate
 
 void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
-		     byte row4, byte row5, byte row6, byte row7)
+			 byte row4, byte row5, byte row6, byte row7)
 {
   _colpin[0] = col1;
   _colpin[1] = col2;
@@ -37,6 +37,14 @@ void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, 
   for (_currrow = 0; _currrow < NUMROWS; _currrow++) _row[_currrow] = 0;
   _currrow = 0;
   setFramesPerSecond(50);
+}
+
+void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
+			 byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive)
+{
+  _rowactive = rowactive;
+  _columnactive = columnactive;
+  begin(col1, col2, col3, col4, col5, row1, row2, row3, row4, row5, row6, row7);
 }
 
 void DotMatrix5x7::setUpsideDown(bool enable)
@@ -232,9 +240,8 @@ void DotMatrix5x7::displayRow(void)
 {
   byte pat;
   byte mask = B10000000;
-
   if (Dot5x7._blank >= 8) return;
-  digitalWrite(Dot5x7._rowpin[Dot5x7._currrow], HIGH);
+  digitalWrite(Dot5x7._rowpin[Dot5x7._currrow], !Dot5x7._rowactive);
   Dot5x7._currrow++;
   if (Dot5x7._currrow >= NUMROWS) Dot5x7._currrow = 0;
   if (Dot5x7._blocked) pat = 0;
@@ -243,9 +250,9 @@ void DotMatrix5x7::displayRow(void)
     if (Dot5x7._blank && pat == 0) Dot5x7._blank++;
   }
   for (byte c=0; c < NUMCOLS; c++) {
-    digitalWrite(Dot5x7._colpin[c], (mask&pat) != 0);
+    digitalWrite(Dot5x7._colpin[c], ((mask&pat) ? Dot5x7._columnactive : !Dot5x7._columnactive));
     mask = mask>>1;
   }
-  digitalWrite(Dot5x7._rowpin[Dot5x7._currrow], LOW);
+  digitalWrite(Dot5x7._rowpin[Dot5x7._currrow], Dot5x7._rowactive);
 }
 
