@@ -3,9 +3,11 @@
    using timer1.
 */
 
-#include <TimerOne.h>
 #include <dotfont5x7.h>
 #include <DotMatrix5x7.h>
+#ifndef USETIMER0
+#include <TimerOne.h>
+#endif
 
 DotMatrix5x7 Dot5x7; //preinstantiate
 
@@ -62,11 +64,23 @@ void DotMatrix5x7::setFont(const byte *f)
   _font = (byte*)f;
 }
 
+#ifdef USETIMER0
+ISR(TIMER0_COMPA_vect)
+{
+  Dot5x7.displayRow();
+}
+#endif
+
 void DotMatrix5x7::setFramesPerSecond(int fps)
 {
-   _period = 1000000UL/(fps*NUMROWS);  
+   _period = 1000000UL/(fps*NUMROWS);
+#ifdef USETIMER0
+   OCR0A = 0xAF;
+   TIMSK0 |= _BV(OCIE0A); // activate compare interrupt that triggers in the middle of a cycle
+#else
   Timer1.initialize(_period);
   Timer1.attachInterrupt(displayRow);
+#endif
 }
 
 void DotMatrix5x7::setBlinkFrames(int blinkon, int blinkoff)
@@ -238,7 +252,7 @@ void DotMatrix5x7::scrollString(char const *str,  int showtime, int scrolltime, 
 }
 
 
-void DotMatrix5x7::scrollDisplayRight(byte curr, byte next, byte offset, byte step)
+void DotMatrix5x7::scrollDisplayLeft(byte curr, byte next, byte offset, byte step)
 {
    byte loccol[NUMCOLS];
    byte c, filled = 0;
@@ -256,10 +270,10 @@ void DotMatrix5x7::scrollDisplayRight(byte curr, byte next, byte offset, byte st
    _blank = 0;
 }
 
-void DotMatrix5x7::scrollDisplayLeft(byte curr, byte next, byte offset, byte step)
+void DotMatrix5x7::scrollDisplayRight(byte curr, byte next, byte offset, byte step)
 {
   if (step > NUMCOLS+offset) step = NUMCOLS+offset;
-  scrollDisplayRight(next, curr, offset, (NUMCOLS+offset)-step);
+  scrollDisplayLeft(next, curr, offset, (NUMCOLS+offset)-step);
 }
 
 

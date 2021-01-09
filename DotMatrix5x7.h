@@ -2,6 +2,8 @@
 #ifndef DOTMATRIX5X7_H
 #define DOTMATRIX5X7_H
 
+#define USETIMER0 // use timer 0 instead of timer 1
+
 #include <Arduino.h>
 
 #define NUMCOLS 5

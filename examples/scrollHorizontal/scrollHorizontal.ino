@@ -34,6 +34,6 @@ void loop(void)
   }
   delay(1000);
   Dot5x7.clear();
-  Dot5x7.scrollRightString(str,500,70,0);
+  Dot5x7.scrollLeftString(str,500,70,0);
   delay(2000);
 }
