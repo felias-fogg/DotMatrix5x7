@@ -1,17 +1,20 @@
 # DotMatrix5x7
 A 5x7 dot matrix display driven directly by Arduino pins (12 needed!)
 
-Version: 1.1
+Version: 1.2
 
-Date:  03-01-2021
+Date:  09-01-2021
 
 ## Features
 
-* Supports 5x7 dot matrix displays such as TA07-11SEKWA.
+* Supports 5x7 dot matrix displays such as TA07-11SEKWA
 * Assumes only Arduino pins, no external controller
+* Pins and polarity are user definable
 * Interrupt driven (using timer 1)
 * Can scroll vertically and horizontally
-* Pins and polarity are freely definable
+* One can use regular strings and strings in flash memory
+* It is possible to let characters blink
+* You can provide your own delay function (in order to save power or to do something in parallel)
 
 ## Usage
 

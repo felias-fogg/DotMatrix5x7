@@ -4,8 +4,8 @@
 
 void setup()
 {
-  Dot5x7.begin(0, 1, 2, 3, 4,         // column pins
-	       5, 6, 7, 8, 9, 10, 11, // row pins
+  Dot5x7.begin(2, 3, 4, 5, 6,         // column pins
+	       7, 8, 9, 10, 11, 12, 13, // row pins
 	       LOW,                   // value when row pin is active (default value)
 	       HIGH);                 // value when column pin is active (default value)
   Dot5x7.setUpsideDown(true);         // display all chars upside down

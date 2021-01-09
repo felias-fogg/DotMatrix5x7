@@ -47,14 +47,14 @@ void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, 
   begin(col1, col2, col3, col4, col5, row1, row2, row3, row4, row5, row6, row7);
 }
 
+void DotMatrix5x7::setDelayFunction(void (*f) (long unsigned int))
+{
+  _delay = f;
+}
+
 void DotMatrix5x7::setUpsideDown(bool enable)
 {
   _upsidedown = enable;
-}
-
-void DotMatrix5x7::clear(void)
-{
-  show(' ');
 }
 
 void DotMatrix5x7::setFont(const byte *f)
@@ -69,6 +69,16 @@ void DotMatrix5x7::setFramesPerSecond(int fps)
   Timer1.attachInterrupt(displayRow);
 }
 
+void DotMatrix5x7::setBlinkFrames(int blinkon, int blinkoff)
+{
+  _blinkon = blinkon;
+  _blinkoff = blinkoff;
+}
+
+void DotMatrix5x7::clear(void)
+{
+  show(' ');
+}
 
 void DotMatrix5x7::show(byte c)
 {
@@ -83,17 +93,35 @@ void DotMatrix5x7::show(byte c)
   _blocked = false;
 }
 
-void DotMatrix5x7::showString(char const str[], int ontime, int offtime)
+void DotMatrix5x7::showString(char const *str, int ontime, int offtime)
+{
+  showStringWorker(str, ontime, offtime, false);
+}
+
+void DotMatrix5x7::showString(const __FlashStringHelper *str, int ontime, int offtime)
+{
+  showStringWorker(reinterpret_cast<PGM_P>(str), ontime, offtime, true);
+}
+
+void DotMatrix5x7::showString_P(char const *str, int ontime, int offtime)
+{
+  showStringWorker(str, ontime, offtime, true);
+}
+
+void DotMatrix5x7::showStringWorker(char const *str, int ontime, int offtime, bool flash)
 {
   int i;
+  unsigned char c;
   Dot5x7.clear();
-  for (i=0; i< strlen(str); i++) {
-    Dot5x7.show(str[i]);
-    delay(ontime);
+  while (true) {
+    c = (flash ? pgm_read_byte(str++)  : *str++);
+    if (c == 0) break;
+    Dot5x7.show(c);
+    _delay(ontime);
     Dot5x7.clear();
-    delay(offtime);
+    _delay(offtime);
   }
-  delay(offtime);
+  _delay(offtime);
 }
 
 void DotMatrix5x7::scrollUp(byte curr, byte next, byte offset, byte step)
@@ -102,9 +130,19 @@ void DotMatrix5x7::scrollUp(byte curr, byte next, byte offset, byte step)
   else scrollDisplayUp(curr, next, offset, step);
 }
 
-void DotMatrix5x7::scrollUpString(char const str[],  int showtime, int scrolltime, int offset)
+void DotMatrix5x7::scrollUpString(char const *str,  int showtime, int scrolltime, int offset)
 {
   scrollString(str, showtime, scrolltime, offset, UPDIR);
+}
+
+void DotMatrix5x7::scrollUpString(const __FlashStringHelper *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(reinterpret_cast<PGM_P>(str), showtime, scrolltime, offset, UPDIR, true);
+}
+
+void DotMatrix5x7::scrollUpString_P(char const *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(str, showtime, scrolltime, offset, UPDIR, true);
 }
 
 void DotMatrix5x7::scrollDown(byte curr, byte next, byte offset, byte step)
@@ -113,9 +151,19 @@ void DotMatrix5x7::scrollDown(byte curr, byte next, byte offset, byte step)
   else scrollDisplayDown(curr, next, offset, step);
 }
 
-void DotMatrix5x7::scrollDownString(char const str[],  int showtime, int scrolltime, int offset)
+void DotMatrix5x7::scrollDownString(char const *str,  int showtime, int scrolltime, int offset)
 {
   scrollString(str, showtime, scrolltime, offset, DOWNDIR);
+}
+
+void DotMatrix5x7::scrollDownString(const __FlashStringHelper *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(reinterpret_cast<PGM_P>(str), showtime, scrolltime, offset, DOWNDIR, true);
+}
+
+void DotMatrix5x7::scrollDownString_P(char const *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(str, showtime, scrolltime, offset, DOWNDIR, true);
 }
 
 void DotMatrix5x7::scrollRight(byte curr, byte next, byte offset, byte step)
@@ -124,9 +172,19 @@ void DotMatrix5x7::scrollRight(byte curr, byte next, byte offset, byte step)
   else scrollDisplayRight(curr, next, offset, step);
 }
 
-void DotMatrix5x7::scrollRightString(char const str[],  int showtime, int scrolltime, int offset)
+void DotMatrix5x7::scrollRightString(char const *str,  int showtime, int scrolltime, int offset)
 {
   scrollString(str, showtime, scrolltime, offset, RIGHTDIR);
+}
+
+void DotMatrix5x7::scrollRightString(const __FlashStringHelper *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(reinterpret_cast<PGM_P>(str), showtime, scrolltime, offset, RIGHTDIR, true);
+}
+
+void DotMatrix5x7::scrollRightString_P(char const *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(str, showtime, scrolltime, offset, RIGHTDIR, true);
 }
 
 void DotMatrix5x7::scrollLeft(byte curr, byte next, byte offset, byte step)
@@ -136,30 +194,47 @@ void DotMatrix5x7::scrollLeft(byte curr, byte next, byte offset, byte step)
 }
 
 
-void DotMatrix5x7::scrollLeftString(char const str[],  int showtime, int scrolltime, int offset)
+void DotMatrix5x7::scrollLeftString(char const *str,  int showtime, int scrolltime, int offset)
 {
   scrollString(str, showtime, scrolltime, offset, LEFTDIR);
 }
 
-void DotMatrix5x7::scrollString(char const str[],  int showtime, int scrolltime, int offset, byte dir)
+void DotMatrix5x7::scrollLeftString(const __FlashStringHelper *str,  int showtime, int scrolltime, int offset)
 {
+  scrollString(reinterpret_cast<PGM_P>(str), showtime, scrolltime, offset, LEFTDIR, true);
+}
+
+void DotMatrix5x7::scrollLeftString_P(char const *str,  int showtime, int scrolltime, int offset)
+{
+  scrollString(str, showtime, scrolltime, offset, LEFTDIR, true);
+}
+
+void DotMatrix5x7::scrollString(char const *str,  int showtime, int scrolltime, int offset, byte dir, bool flash)
+{
+  bool stringend = false;
+  char curr = ' ', next;
   clear();
-  show(str[0]);
-  delay(showtime);
-  for (byte i=0; i< strlen(str)-1; i++) {
+  while (true) {
+    next = (flash ? pgm_read_byte(str++) : *str++);
+    if (next == 0) {
+      next = ' ';
+      stringend = true;
+    }
     for (byte j=0; j<NUMROWS+1+offset; j++) {
       switch (dir) {
-      case UPDIR: scrollUp(str[i],str[i+1],offset,j); break;
-      case DOWNDIR: scrollDown(str[i],str[i+1],offset,j); break;
-      case RIGHTDIR: scrollRight(str[i],str[i+1],offset,j); break;
-      case LEFTDIR: scrollLeft(str[i],str[i+1],offset,j); break;
+      case UPDIR: scrollUp(curr,next,offset,j); break;
+      case DOWNDIR: scrollDown(curr,next,offset,j); break;
+      case RIGHTDIR: scrollRight(curr,next,offset,j); break;
+      case LEFTDIR: scrollLeft(curr,next,offset,j); break;
       }
-      delay(scrolltime);
+      _delay(scrolltime);
     }
-    delay(showtime);
+    if (stringend) break;
+    _delay(showtime);
+    curr = next;
   }
   clear();
-  delay(showtime);
+  _delay(showtime);
 }
 
 
@@ -245,9 +320,14 @@ void DotMatrix5x7::displayRow(void)
   Dot5x7._currrow++;
   if (Dot5x7._currrow >= NUMROWS) Dot5x7._currrow = 0;
   if (Dot5x7._blocked) pat = 0;
-  else {
-    pat = Dot5x7._row[Dot5x7._currrow];
-    if (Dot5x7._blank && pat == 0) Dot5x7._blank++;
+  else { 
+    if (Dot5x7._blinkon == 0 || Dot5x7._blinkoff == 0 || Dot5x7._blinkcnt++ < Dot5x7._blinkon*7) {
+      pat = Dot5x7._row[Dot5x7._currrow];
+      if (Dot5x7._blank && pat == 0) Dot5x7._blank++;
+    } else {
+      pat = 0;
+    }
+    if (Dot5x7._blinkcnt >= (Dot5x7._blinkon+Dot5x7._blinkoff)*7) Dot5x7._blinkcnt = 0;
   }
   for (byte c=0; c < NUMCOLS; c++) {
     digitalWrite(Dot5x7._colpin[c], ((mask&pat) ? Dot5x7._columnactive : !Dot5x7._columnactive));

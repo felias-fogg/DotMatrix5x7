@@ -17,7 +17,7 @@ char str[]="Hello World!";
 
 void setup(void)
 {
-  Dot5x7.begin(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+  Dot5x7.begin(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
   Dot5x7.setFramesPerSecond(100);
 }
 

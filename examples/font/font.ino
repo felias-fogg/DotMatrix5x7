@@ -10,21 +10,16 @@
 
 void setup(void)
 {
-  Dot5x7.begin(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+  Dot5x7.begin(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
   Dot5x7.setFramesPerSecond(100);
   Dot5x7.setUpsideDown(false);
+  Serial.begin(19200);
 }
 
 void loop(void)
 {
-  int c;
-  for (c=0; c<256; c++) {
-    Dot5x7.show(c);	
-    delay(SHOWTIME);
-    for (byte i=0; i<NUMCOLS+1+1; i++) {
-      Dot5x7.scrollRight(c,c+1,1,i);
-      delay(SCROLLTIME);
-    }
-  }
-  delay(5000);
+  long c;
+  c = Serial.parseInt();
+  if (c != 0) 
+    Dot5x7.show(c);
 }
