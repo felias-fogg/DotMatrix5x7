@@ -1,7 +1,7 @@
 # DotMatrix5x7
 Drive a single 5x7 dot matrix display directly by Arduino pins (12 needed!)
 
-Version: 1.4.0
+Version: 1.4.1
 
 Date:  13-01-2021
 
