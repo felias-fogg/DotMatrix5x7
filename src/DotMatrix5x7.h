@@ -2,7 +2,7 @@
 #ifndef DOTMATRIX5X7_H
 #define DOTMATRIX5X7_H
 
-//#define USETIMER0 // use timer 0 instead of timer 1
+// #define USETIMER0 // use timer 0 instead of timer 1
 
 #include <Arduino.h>
 
@@ -14,14 +14,16 @@
 #define LEFTDIR 3
 
 
-// Codes for german Umlauts:
+// Codes for German Umlauts:
 #define aUML "\x84" // ä = 0x84
 #define oUML "\x94" // ö = 0x94
 #define uUML "\x81" // ü = 0x81
-#define sZET "\xE0" // ß = 0xE0 (this is an error, should be 0xE1)
+#define sZET "\xE0" // ß = 0xE1
 #define AUML "\x8E" // Ä = 0x8E
 #define OUML "\x99" // Ö = 0x99
 #define UUML "\x9A" // Ü = 0x9A
+
+#define DEGREE "\xF8" 
 
 class DotMatrix5x7 {
  public:
