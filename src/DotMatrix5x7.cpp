@@ -3,7 +3,7 @@
    using timer1.
 */
 
-#include <dotfont5x7.h>
+#include "dotfont5x7.h"
 #include <DotMatrix5x7.h>
 #ifndef USETIMER0
 #include <TimerOne.h>
@@ -28,11 +28,11 @@ void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, 
   _rowpin[6] = row7;
   for (byte r=0; r < NUMROWS; r++) {
     pinMode(_rowpin[r], OUTPUT);
-    digitalWrite(_rowpin[r], HIGH);
+    digitalWrite(_rowpin[r], !_rowactive);
   }
   for (byte c=0; c < NUMCOLS; c++) {
     pinMode(_colpin[c], OUTPUT);
-    digitalWrite(_colpin[c], LOW);
+    digitalWrite(_colpin[c],  !_columnactive);
   }
   _currrow = 0;
   setFont(font5x7);
@@ -63,6 +63,33 @@ void DotMatrix5x7::setFont(const byte *f)
 {
   _font = (byte*)f;
 }
+
+void DotMatrix5x7::setFont(void)
+{
+  setFont(font5x7);
+}
+
+// stop timer and set all output pins to inactive
+void DotMatrix5x7::sleep(void) 
+{
+#ifdef USETIMER0
+   TIMSK0 &= ~_BV(OCIE0A); // deactivate compare interrupt of Timer0
+#else
+   Timer1.stop();
+#endif
+   for (byte c=0; c < NUMCOLS; c++) digitalWrite(_colpin[c], !_columnactive);
+   for (byte r=0; r < NUMROWS; r++) digitalWrite(_rowpin[r], !_rowactive);
+}
+
+void DotMatrix5x7::wakeup(void)
+{
+#ifdef USETIMER0
+   TIMSK0 |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+#else
+   Timer1.restart();
+#endif
+}
+
 
 #ifdef USETIMER0
 ISR(TIMER0_COMPA_vect)
@@ -234,7 +261,7 @@ void DotMatrix5x7::scrollString(char const *str,  int showtime, int scrolltime, 
       next = ' ';
       stringend = true;
     }
-    for (byte j=0; j<NUMROWS+1+offset; j++) {
+    for (byte j=1; j<NUMROWS+offset-1; j++) {
       switch (dir) {
       case UPDIR: scrollUp(curr,next,offset,j); break;
       case DOWNDIR: scrollDown(curr,next,offset,j); break;
@@ -329,20 +356,17 @@ void DotMatrix5x7::displayRow(void)
 {
   byte pat;
   byte mask = B10000000;
-  if (Dot5x7._blank >= 8) return;
+  if (Dot5x7._blank >= 8 || Dot5x7._blocked) return;
   digitalWrite(Dot5x7._rowpin[Dot5x7._currrow], !Dot5x7._rowactive);
   Dot5x7._currrow++;
   if (Dot5x7._currrow >= NUMROWS) Dot5x7._currrow = 0;
-  if (Dot5x7._blocked) pat = 0;
-  else { 
-    if (Dot5x7._blinkon == 0 || Dot5x7._blinkoff == 0 || Dot5x7._blinkcnt++ < Dot5x7._blinkon*7) {
-      pat = Dot5x7._row[Dot5x7._currrow];
-      if (Dot5x7._blank && pat == 0) Dot5x7._blank++;
-    } else {
-      pat = 0;
-    }
-    if (Dot5x7._blinkcnt >= (Dot5x7._blinkon+Dot5x7._blinkoff)*7) Dot5x7._blinkcnt = 0;
+  if (Dot5x7._blinkon == 0 || Dot5x7._blinkoff == 0 || Dot5x7._blinkcnt++ < Dot5x7._blinkon*7) {
+    pat = Dot5x7._row[Dot5x7._currrow];
+    if (Dot5x7._blank && pat == 0) Dot5x7._blank++;
+  } else {
+    pat = 0;
   }
+  if (Dot5x7._blinkcnt >= (Dot5x7._blinkon+Dot5x7._blinkoff)*7) Dot5x7._blinkcnt = 0;
   for (byte c=0; c < NUMCOLS; c++) {
     digitalWrite(Dot5x7._colpin[c], ((mask&pat) ? Dot5x7._columnactive : !Dot5x7._columnactive));
     mask = mask>>1;

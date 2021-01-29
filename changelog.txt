@@ -1,0 +1,14 @@
+Version  1.4.3
+New methods: sleep() and wakeup(), which shut down the display, respectively, wakes it up again
+New method: setFont() without arguments restores original font
+Scrolling is not flicker free
+Bug fix: In the initialization, rows and columns were set to HIGH and LOW instead of _rowactive and _columnactive
+
+Version 1.4.2
+Typos corrected and font file updated (now all chars correspond to the IBM-PC extended char set)
+
+Version 1.4.1
+font file moved to the right place
+
+Version 1.4.0
+First published version

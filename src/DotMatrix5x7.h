@@ -6,6 +6,7 @@
 
 #include <Arduino.h>
 
+
 #define NUMCOLS 5
 #define NUMROWS 7
 #define UPDIR 0
@@ -32,10 +33,13 @@ class DotMatrix5x7 {
   void begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
 	     byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive);
   void setFont(const byte *f);
+  void setFont(void);
   void setFramesPerSecond(int fps);
   void setUpsideDown(bool enable);
   void setDelayFunction(void (*f) (long unsigned int));
   void setBlinkFrames(int blinkon, int blinkoff);
+  void sleep();
+  void wakeup();
   void clear(void);
   void show(byte c);
   void showString(const char *str, int ontime, int offtime);

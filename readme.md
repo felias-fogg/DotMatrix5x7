@@ -1,9 +1,9 @@
 # DotMatrix5x7
 Drive a single 5x7 dot matrix display directly by Arduino pins (12 needed!)
 
-Version: 1.4.2
+Version: 1.4.3
 
-Date:  26.01.2021
+Date:  28.01.2021
 
 ## Features
 
@@ -35,6 +35,8 @@ In addition, there are a few methods that control the interface:
 - `setFramesPerSecond(int fps)` is used to control how often a complete matrix is displayed. The default value is 50 and one should not select values below 42. This is only effective if Timer1 is used.
 - `setBlinkFrames(int blinkon, int blinkoff)` controls blinking by specifying the number of frames where the character is displayed and the number of frames when the display is off. If either value is 0, no blinking will happening.
 - `setDelayFunction(void (*f) (long unsigned int))` enables one to specify a custom delay function that is to be used when the `showString` and `scrollXXXString` methods are used. This may be used in order to minimize power consumption or to communicate with peripherals.
+- `sleep()` stops timer and switches off all LEDs.
+- `wakup()` restarts timer.
 
 Finally, there exists the compile time option `USETIMER0`, which when defined in DotMatrix5x7.h leads to using TIMER0 (the timer for millis and delays) instead of TIMER1. Note that this does not interfere with delay or millis since we use a different interrupt! However, the method `setFramesPerSecond(int fps)` won't have any effect anymore. Moreover, using this option makes only sense when the MCU frequency is 8MHz or higher. With a system clock of 16 MHz, you get a frame rate of 142 fps and with 8 MHz 71 fps. With 4 MHz or less the frame rate is obviously too low.
 
