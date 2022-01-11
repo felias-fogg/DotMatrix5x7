@@ -52,7 +52,7 @@ jobs:
           - arduino-boards-fqbn: ATTinyCore:avr:attiny1634:clock=8internal
             platform-url: http://drazzy.com/package_drazzy.com_index.json
             sketches-exclude: idleFunction
-	    build-properties:
+            build-properties:
                All:
                  -DUSETIMER0
 
