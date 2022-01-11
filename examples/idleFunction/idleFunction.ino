@@ -23,6 +23,7 @@ void myIdle(long unsigned int period)
 #else
     #error "MCU not supported"
 #endif
+  }
 }
 
 void setup(void)
