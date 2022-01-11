@@ -5,11 +5,11 @@
 #define DOTFONT5X7_H
 
 
-// standard ascii 5x7 font incl. the extensions:
+// standard ascii 5x7 font incl. the IPM-PC extension:
 #define aUML "\x84" // ä = 0x84
 #define oUML "\x94" // ö = 0x94
 #define uUML "\x81" // ü = 0x81
-#define sZET "\xE0" // ß = 0xE0 (this is an error, should be 0xE1)
+#define sZET "\xE1" // ß = 0xE1
 #define AUML "\x8E" // Ä = 0x8E
 #define OUML "\x99" // Ö = 0x99
 #define UUML "\x9A" // Ü = 0x9A

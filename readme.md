@@ -1,9 +1,14 @@
 # DotMatrix5x7
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Commits since latest](https://img.shields.io/github/commits-since/felias-fogg/DotMatrix5x7/latest?include_prereleases)](https://github.com/felias-fogg/DotMatrix5x7/commits/master)
+![Hit Counter](https://visitor-badge.laobi.icu/badge?page_id=felias-fogg_DotMatrix5x7)
+[![Build Status](https://github.com/felias-fogg/DotMatrix5x7/workflows/LibraryBuild/badge.svg)](https://github.com/felias-fogg/DotMatrix5x7/actions)
+
 Drive a single 5x7 dot matrix display directly by Arduino pins (12 needed!)
 
-Version: 1.4.3
+Version: 1.4.4
 
-Date:  28.01.2021
+Date:  11.01.2022
 
 ## Features
 
@@ -40,31 +45,56 @@ In addition, there are a few methods that control the interface:
 
 Finally, there exists the compile time option `USETIMER0`, which when defined in DotMatrix5x7.h leads to using TIMER0 (the timer for millis and delays) instead of TIMER1. Note that this does not interfere with delay or millis since we use a different interrupt! However, the method `setFramesPerSecond(int fps)` won't have any effect anymore. Moreover, using this option makes only sense when the MCU frequency is 8MHz or higher. With a system clock of 16 MHz, you get a frame rate of 142 fps and with 8 MHz 71 fps. With 4 MHz or less the frame rate is obviously too low.
 
+## Adding new symbols
+
+If you would like to create your own symbols, you can use the website http://dotmatrixtool.com/. Select the following parameters:
+
+- Width: 6
+- Height: 8
+- Byte Order: Column Major
+- Endian: Little Endian
+
+Now you can can left click (to mark) and right click (to  unmark) and produce your symbol in the left five columns and the upper  seven rows. Press "Generate", and you get the code you have to fill into the font table (the first five bytes). 
+
+Now, you can either use one of the entries in the standard font table in `dotfont5x7.h` or you can setup your own private font  table, which needs to be a PROGMEM char array similar to the `font5x7`  array, and then use the setFont method in order to switch between the  standard table and your new table. Let us assume, you have defined a Yen symbol, which leads to the five-byte code `0x29, 0x2a, 0x7c, 0x2a, 0x29`. Then you could, e.g., declare and use this symbol as follows:
+
+```c++
+const unsigned char  money[] PROGMEM = {0x29, 0x2a, 0x7c, 0x2a, 0x29};
+...
+Dot5x7.setFont(money);  // select custom font
+Dot5x7.show(0);         // show the entry in custom font at location 0
+delay(1000);
+Dot5x7.setFont();       // switch back to system font
+...
+```
+
 
 
 ## Example
 
-	// Simple sketch to display a character and a string
-	#include <DotMatrix5x7.h>
+```c++
+// Simple sketch to display a character and a string
+#include <DotMatrix5x7.h>
 
-	void setup()
-	{
-	    Dot5x7.begin(0, 1, 2, 3, 4,         // column pins
-		         5, 6, 7, 8, 9, 10, 11, // row pins
-		         LOW,                   // value when row pin is active (default value)
-			 HIGH);                 // value when column pin is active (default value)
-	    Dot5x7.setUpsideDown(true);         // display all chars upside down
-	    Dot5x7.setFramesPerSecond(50);      // display 50 frames per second (default value)			 
-	}	 
+void setup()
+{
+    Dot5x7.begin(0, 1, 2, 3, 4,         // column pins
+	         5, 6, 7, 8, 9, 10, 11, // row pins
+	         LOW,                   // value when row pin is active (default value)
+		 HIGH);                 // value when column pin is active (default value)
+    Dot5x7.setUpsideDown(true);         // display all chars upside down
+    Dot5x7.setFramesPerSecond(50);      // display 50 frames per second (default value)			 
+}	 
 
-	void loop()
-	{
-		Dot5x7.show('X'); // display 'X'
-		delay(1000);      // for 1 second
-		Dot5x7.clear();   // clear display
-		delay(1000);      // show empty display for 1 second
-		Dot5x7.showString("Hello", 700, 100); // display string, with 0.7sec time for showing each char
-		                                      // and 0.1sec pause between two chars
-	}
+void loop()
+{
+	Dot5x7.show('X'); // display 'X'
+	delay(1000);      // for 1 second
+	Dot5x7.clear();   // clear display
+	delay(1000);      // show empty display for 1 second
+	Dot5x7.showString("Hello", 700, 100); // display string, with 0.7sec time for showing each char
+	                                      // and 0.1sec pause between two chars
+}
+```
 
 This software is published under the [LGPL](http://www.gnu.org/licenses/lgpl-3.0.html)

@@ -1,15 +1,23 @@
 {
-  "name": "DotMatrix5x7",
-  "keywords": "display",
-  "description": "Handles one 5x7 display directly driven by Arduino pins",
-  "repository":
-  {
-    "type": "git",
-    "url": "https://github.com/felias-fogg/DotMatrix5x7.git"
-  },
-  "frameworks": "arduino",
-  "platforms":
-  [
-    "atmelavr",
-  ]
+    "name": "DotMatrix5x7",
+    "version": "1.4.4",
+    "keywords": "display",
+    "description": "Handles one 5x7 display directly driven by Arduino pins",
+    "repository":
+    {
+	"type": "git",
+	"url": "https://github.com/felias-fogg/DotMatrix5x7.git"
+    },
+   "authors": [
+	{
+	    "name": "Bernhard Nebel",
+	    "url": "http://hinterm-ziel.de/",
+	    "maintainer": true
+	}
+   ],
+    "frameworks": "arduino",
+    "platforms":
+    [
+	"atmelavr"
+    ]
 }
