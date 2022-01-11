@@ -2,6 +2,7 @@ Version 1.4.4
 Corrected code for sZET in font file (it is now truly 0xE1)
 Added comment for adding new symbols
 Added GitHub actions and badges
+Made example idelFunction compatible with offical Low-Power lib
 
 Version  1.4.3
 New methods: sleep() and wakeup(), which shut down the display, respectively, wakes it up again
