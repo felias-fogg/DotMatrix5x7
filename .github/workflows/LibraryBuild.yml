@@ -23,6 +23,9 @@ jobs:
 
     runs-on: ubuntu-latest # I picked Ubuntu to use shell scripts.
 
+    env:
+      REQUIRED_LIBRARIES: TimerOne
+
     strategy:
       matrix:
         # The matrix will produce one job for each configuration parameter of type `arduino-boards-fqbn`
