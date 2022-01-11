@@ -73,7 +73,11 @@ void DotMatrix5x7::setFont(void)
 void DotMatrix5x7::sleep(void) 
 {
 #ifdef USETIMER0
+#ifdef TIMSK0
    TIMSK0 &= ~_BV(OCIE0A); // deactivate compare interrupt of Timer0
+#else
+   TIMSK &= ~_BV(OCIE0A); // deactivate compare interrupt of Timer0
+#endif
 #else
    Timer1.stop();
 #endif
@@ -84,7 +88,11 @@ void DotMatrix5x7::sleep(void)
 void DotMatrix5x7::wakeup(void)
 {
 #ifdef USETIMER0
+#ifdef TIMSK0
    TIMSK0 |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+#else
+   TIMSK |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+#endif
 #else
    Timer1.restart();
 #endif
@@ -92,7 +100,11 @@ void DotMatrix5x7::wakeup(void)
 
 
 #ifdef USETIMER0
+#ifdef TIMER0_COMPA_vect
 ISR(TIMER0_COMPA_vect)
+#else
+ISR(TIM0_COMPA_vect)
+#endif
 {
   Dot5x7.displayRow();
 }
@@ -103,7 +115,11 @@ void DotMatrix5x7::setFramesPerSecond(int fps)
    _period = 1000000UL/(fps*NUMROWS);
 #ifdef USETIMER0
    OCR0A = 0xAF;
-   TIMSK0 |= _BV(OCIE0A); // activate compare interrupt that triggers in the middle of a cycle
+#ifdef TIMSK0
+   TIMSK0 |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+#else
+   TIMSK |= _BV(OCIE0A); // activate compare interrupt that triggers in the middle of a cycle
+#endif
 #else
   Timer1.initialize(_period);
   Timer1.attachInterrupt(displayRow);

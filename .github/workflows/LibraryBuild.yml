@@ -52,6 +52,9 @@ jobs:
           - arduino-boards-fqbn: ATTinyCore:avr:attiny1634:clock=8internal
             platform-url: http://drazzy.com/package_drazzy.com_index.json
             sketches-exclude: idleFunction
+	    build-propteries:
+               All:
+                 -DUSETIMER0
 
       # Do not cancel all jobs / architectures if one job fails
       fail-fast: false

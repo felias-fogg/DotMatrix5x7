@@ -6,13 +6,14 @@
 
 
 // standard ascii 5x7 font incl. the IPM-PC extension:
-#define aUML "\x84" // ä = 0x84
-#define oUML "\x94" // ö = 0x94
-#define uUML "\x81" // ü = 0x81
-#define sZET "\xE1" // ß = 0xE1
-#define AUML "\x8E" // Ä = 0x8E
-#define OUML "\x99" // Ö = 0x99
-#define UUML "\x9A" // Ü = 0x9A
+// already defined in DotMatrx5x7.h
+//#define aUML "\x84" // ä = 0x84
+//#define oUML "\x94" // ö = 0x94
+//#define uUML "\x81" // ü = 0x81
+//#define sZET "\xE1" // ß = 0xE1
+//#define AUML "\x8E" // Ä = 0x8E
+//#define OUML "\x99" // Ö = 0x99
+//#define UUML "\x9A" // Ü = 0x9A
 
 const unsigned char  font5x7[] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x00, // 0x00 empty

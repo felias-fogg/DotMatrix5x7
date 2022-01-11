@@ -19,7 +19,7 @@ void myIdle(long unsigned int period)
 #elif defined(__AVR_ATmega2560__)
     LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER5_ON, TIMER4_ON, TIMER3_ON, TIMER2_ON, TIMER1_ON, TIMER0_ON, SPI_ON, USART3_ON, USART2_ON, USART1_ON, USART0_ON, TWI_ON);
 #elif defined(__AVR_ATmega32U4__)
-    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER4_ON, TIMER3_ON, TIMER2_ON, TIMER1_ON, TIMER0_ON, SPI_ON, USART1_ON, TWI_ON, USB_ON);
+    LowPower.idle(SLEEP_FOREVER, ADC_ON, TIMER4_ON, TIMER3_ON,  TIMER1_ON, TIMER0_ON, SPI_ON, USART1_ON, TWI_ON, USB_ON);
 #else
     #error "MCU not supported"
 #endif
