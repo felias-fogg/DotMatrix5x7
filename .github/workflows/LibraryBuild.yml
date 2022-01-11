@@ -24,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest # I picked Ubuntu to use shell scripts.
 
     env:
+      # Comma separated list
       REQUIRED_LIBRARIES: TimerOne
 
     strategy:
