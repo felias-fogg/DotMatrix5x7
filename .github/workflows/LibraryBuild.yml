@@ -69,5 +69,6 @@ jobs:
           arduino-board-fqbn: ${{ matrix.arduino-boards-fqbn }}
           platform-url: ${{ matrix.platform-url }}
           required-libraries: ${{ env.REQUIRED_LIBRARIES }}
+          sketches-exclude: ${{ matrix.sketches-exclude }}
           build-properties: ${{ toJson(matrix.build-properties) }}
 
