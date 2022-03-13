@@ -9,7 +9,7 @@ when USETIMER0 is defined
 Version  1.4.3
 New methods: sleep() and wakeup(), which shut down the display, respectively, wakes it up again
 New method: setFont() without arguments restores original font
-Scrolling is not flicker free
+Scrolling is now flicker free
 Bug fix: In the initialization, rows and columns were set to HIGH and LOW instead of _rowactive and _columnactive
 
 Version 1.4.2
