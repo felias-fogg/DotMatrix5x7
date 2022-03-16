@@ -1,5 +1,6 @@
 # DotMatrix5x7
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Installation instructions](https://www.ardu-badge.com/badge/DotMatrix5x7.svg?)](https://www.ardu-badge.com/DotMatrix5x7)
 [![Commits since latest](https://img.shields.io/github/commits-since/felias-fogg/DotMatrix5x7/latest?include_prereleases)](https://github.com/felias-fogg/DotMatrix5x7/commits/master)
 ![Hit Counter](https://visitor-badge.laobi.icu/badge?page_id=felias-fogg_DotMatrix5x7)
 [![Build Status](https://github.com/felias-fogg/DotMatrix5x7/workflows/LibraryBuild/badge.svg)](https://github.com/felias-fogg/DotMatrix5x7/actions)
