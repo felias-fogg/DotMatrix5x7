@@ -2,10 +2,17 @@
 #ifndef DOTMATRIX5X7_H
 #define DOTMATRIX5X7_H
 
-// #define USETIMER0 // use timer 0 instead of timer 1
+#define USETIMER0 1
+#define USETIMER1 0
 
 #include <Arduino.h>
+#if USETIMER1
+#include <TimerOne.h>
+#endif
 
+#if !USETIMER0 && !defined(TIMER1_A_PIN)
+#error "Either Timer 0 or Timer 1 needs to be available for generating interrupts for DotMatrix5x7"
+#endif
 
 #define NUMCOLS 5
 #define NUMROWS 7
@@ -29,11 +36,12 @@
 class DotMatrix5x7 {
  public:
   void begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
-	     byte row4, byte row5, byte row6, byte row7);
+	     byte row4, byte row5, byte row6, byte row7, byte timer=0);
   void begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
-	     byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive);
+	     byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive, byte timer=0);
   void setFont(const byte *f);
   void setFont(void);
+  byte getTimer(void);
   void setFramesPerSecond(int fps);
   void setUpsideDown(bool enable);
   void setDelayFunction(void (*f) (long unsigned int));
@@ -78,6 +86,7 @@ class DotMatrix5x7 {
   byte *_font;
   byte _rowactive = LOW;
   byte _columnactive = HIGH;
+  byte _timer = 0;
   void (*_delay) (long unsigned int) = delay;
   volatile byte _row[NUMROWS];
   volatile byte _currrow = 0;

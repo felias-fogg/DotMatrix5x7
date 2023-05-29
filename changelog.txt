@@ -1,3 +1,11 @@
+Version 1.5.0 (29.5.2023)
+TIMER0 is now the default interrupt source. Added a default parameter to the
+begin method for selecting the appropriate timer interrupt. In order
+to avoid TIMER0_CMPA interrupt conflicts, one needs to set the compile
+time constant USETIMER0 in DotMatrix5x7.h to 0. If one wants to use
+TIMER1, one needs to define USETIMER1 to 1. Only if both compile time
+constants are set to 1, then the timer parameter for the begin method is significant.
+
 Version 1.4.4
 Corrected code for sZET in font file (it is now truly 0xE1)
 Added comment for adding new symbols

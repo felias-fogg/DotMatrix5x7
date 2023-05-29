@@ -1,6 +1,6 @@
 {
     "name": "DotMatrix5x7",
-    "version": "1.4.4",
+    "version": "1.5.0",
     "keywords": "display",
     "description": "Handles one 5x7 display directly driven by Arduino pins",
     "repository":

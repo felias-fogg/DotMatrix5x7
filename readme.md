@@ -7,16 +7,16 @@
 
 Drive a single 5x7 dot matrix display directly by Arduino pins (12 needed!)
 
-Version: 1.4.4
+Version: 1.5.0
 
-Date:  11.01.2022
+Date:  29.05.2023
 
 ## Features
 
 * Supports 5x7 dot matrix displays such as TA07-11SEKWA
 * Assumes only Arduino pins, no external controller
 * Pins and polarity are user definable
-* Interrupt driven (using timer 1, optionally timer 0)
+* Interrupt driven (using timer 0, optionally timer 1)
 * Can scroll vertically and horizontally
 * One can use regular strings and strings in flash memory
 * It is possible to let characters blink
@@ -24,7 +24,13 @@ Date:  11.01.2022
 
 ## Usage
 
-This library can be used to control one 5x7 dot matrix display. 12 Arduino pins are necessary to control it (5 column pins, 7 row pins). The rows are multiplexed, which means one needs just 5 resistors for the columns. The library makes use of the TimerOne library by Paul Stoffregen in order to display the text in an interrupt driven way. This means you can do other things after you have requested to display a character.
+This library can be used to control one 5x7 dot matrix display. 12 Arduino pins are necessary to control it (5 column pins, 7 row pins). The rows are multiplexed, which means one needs just 5 resistors for the columns. The display of characters is done in an interrupt driven way. This means you can do other things after you have requested to display a character.
+
+Usually, TIMER0 (the timer for millis and delays) is used for generating the interrupts. Note that this does not interfere with `delay()` or `millis()` since we use a different interrupt! However, it could lead to an interrupt conflict if other parts of the program use the `TIMER0_COMPA` interrupt. For this reason, there exists the compile time option `USETIMER0`, which when defined to be 0 in DotMatrix5x7.h disables the TIMER0 interrupt.
+
+Instead or additionally, the `TimerOne` library by Paul Stoffregen could be used, provided the MCU type is supported by this library.  If you want to use the TimerOne library, `USETIMER1` needs to be 1 (it is 0 by default). Note that TimerOne does not support all MCUs and will generate compilation errors if the MCU is not supported.
+
+At least one of those timers must be usable for the library to function. If both timers are available, one can select which one to use when calling the `begin` method. 
 
 When you want to display a single character `c`, call `Dot5x7.show(c)`. A string can be displayed, e.g., as follows: `Dot5x7.showString("Hello World!", 500, 100)`. This displays the string "Hello World!", where each character is displayed 500 msec and there is a pause of 100 msec between characters. One can also use the `F()` notation to pass a string that is stored in flash memory, i.e., `Dot5x7.showString(F("Hello World!"), 500, 100)`. In addition, one might pass a string stored in flash (which has been defined with PROGMEM) using the `_P`-variant of the method, i.e.: `Dot5x7.showString_P(str, 500, 100)`, provided `str` has been defined as `const char PROGMEM str[] = "Hello World!";`.
 
@@ -32,7 +38,7 @@ In addition, there are methods that scroll a string through the display. Scrolli
 
 ## Configuration
 
-The row and column pins can be specified when calling the `begin` method. In addition, you can specify the polarity of when the row and column pins are active, respectively. Default is that row pins are active LOW and column pins are active HIGH. This corresponds to driving a column anode display directly from the pins.
+The row and column pins can be specified when calling the `begin` method. In addition, you can specify the polarity of when the row and column pins are active, respectively. Default is that row pins are active LOW and column pins are active HIGH. This corresponds to driving a column anode display directly from the pins. Finally, as a last (default) argument, one can specify the timer (0 or 1). As mentioned, this is only significant if both timers are available for interrupts, i.e., both the compile time constants `USETIMER1` and `USETIMER0` have to be set to 1 in DotMatrix5x7.h.
 
 In addition, there are a few methods that control the interface:
 
@@ -42,9 +48,9 @@ In addition, there are a few methods that control the interface:
 - `setBlinkFrames(int blinkon, int blinkoff)` controls blinking by specifying the number of frames where the character is displayed and the number of frames when the display is off. If either value is 0, no blinking will happening.
 - `setDelayFunction(void (*f) (long unsigned int))` enables one to specify a custom delay function that is to be used when the `showString` and `scrollXXXString` methods are used. This may be used in order to minimize power consumption or to communicate with peripherals.
 - `sleep()` stops timer and switches off all LEDs.
-- `wakup()` restarts timer.
+- `wakeup()` restarts timer.
 
-Finally, there exists the compile time option `USETIMER0`, which when defined in DotMatrix5x7.h leads to using TIMER0 (the timer for millis and delays) instead of TIMER1. Note that this does not interfere with delay or millis since we use a different interrupt! However, the method `setFramesPerSecond(int fps)` won't have any effect anymore. Moreover, using this option makes only sense when the MCU frequency is 8MHz or higher. With a system clock of 16 MHz, you get a frame rate of 142 fps and with 8 MHz 71 fps. With 4 MHz or less the frame rate is obviously too low.
+
 
 ## Adding new symbols
 
@@ -74,15 +80,15 @@ Dot5x7.setFont();       // switch back to system font
 ## Example
 
 ```c++
-// Simple sketch to display a character and a string
+// Simple sketch for displaying a character and a string
 #include <DotMatrix5x7.h>
 
 void setup()
 {
     Dot5x7.begin(0, 1, 2, 3, 4,         // column pins
-	         5, 6, 7, 8, 9, 10, 11, // row pins
-	         LOW,                   // value when row pin is active (default value)
-		 HIGH);                 // value when column pin is active (default value)
+	         5, 6, 7, 8, 9, 10, 11,     // row pins
+	         LOW,                       // value when row pin is active (default value)
+		 	 HIGH);                     // value when column pin is active (default value)
     Dot5x7.setUpsideDown(true);         // display all chars upside down
     Dot5x7.setFramesPerSecond(50);      // display 50 frames per second (default value)			 
 }	 
@@ -94,7 +100,7 @@ void loop()
 	Dot5x7.clear();   // clear display
 	delay(1000);      // show empty display for 1 second
 	Dot5x7.showString("Hello", 700, 100); // display string, with 0.7sec time for showing each char
-	                                      // and 0.1sec pause between two chars
+	                                      // and 0.1sec pause between two chars.
 }
 ```
 

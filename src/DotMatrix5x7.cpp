@@ -5,15 +5,20 @@
 
 #include "dotfont5x7.h"
 #include <DotMatrix5x7.h>
-#ifndef USETIMER0
-#include <TimerOne.h>
-#endif
 
 DotMatrix5x7 Dot5x7; //preinstantiate
 
 void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
-			 byte row4, byte row5, byte row6, byte row7)
+			 byte row4, byte row5, byte row6, byte row7, byte timer)
 {
+  _timer = timer;
+#if !USETIMER0 && defined(TIMER1_A_PIN)
+  _timer = 1;
+#elif USETIMER0 && !defined(TIMER_A_PIN)
+  _timer = 0;
+#endif
+  if (_timer != 0 && _timer != 1)
+    _timer = 1;
   _colpin[0] = col1;
   _colpin[1] = col2;
   _colpin[2] = col3;
@@ -42,11 +47,11 @@ void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, 
 }
 
 void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
-			 byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive)
+			 byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive, byte timer)
 {
   _rowactive = rowactive;
   _columnactive = columnactive;
-  begin(col1, col2, col3, col4, col5, row1, row2, row3, row4, row5, row6, row7);
+  begin(col1, col2, col3, col4, col5, row1, row2, row3, row4, row5, row6, row7, timer);
 }
 
 void DotMatrix5x7::setDelayFunction(void (*f) (long unsigned int))
@@ -69,17 +74,23 @@ void DotMatrix5x7::setFont(void)
   setFont(font5x7);
 }
 
+byte DotMatrix5x7::getTimer(void)
+{
+  return _timer;
+}
+
 // stop timer and set all output pins to inactive
 void DotMatrix5x7::sleep(void) 
 {
-#ifdef USETIMER0
+#if USETIMER0
 #ifdef TIMSK0
    TIMSK0 &= ~_BV(OCIE0A); // deactivate compare interrupt of Timer0
 #else
    TIMSK &= ~_BV(OCIE0A); // deactivate compare interrupt of Timer0
 #endif
-#else
-   Timer1.stop();
+#endif
+#ifdef TIMER1_A_PIN
+   if (_timer == 1) Timer1.stop();
 #endif
    for (byte c=0; c < NUMCOLS; c++) digitalWrite(_colpin[c], !_columnactive);
    for (byte r=0; r < NUMROWS; r++) digitalWrite(_rowpin[r], !_rowactive);
@@ -87,42 +98,50 @@ void DotMatrix5x7::sleep(void)
 
 void DotMatrix5x7::wakeup(void)
 {
-#ifdef USETIMER0
+#if USETIMER0
+  if (_timer == 0) {
 #ifdef TIMSK0
-   TIMSK0 |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+    TIMSK0 |= _BV(OCIE0A); // activate compare interrupt of Timer0
 #else
-   TIMSK |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+    TIMSK |= _BV(OCIE0A); // activate compare interrupt of Timer0
 #endif
-#else
-   Timer1.restart();
+  }
+#endif
+#ifdef TIMER1_A_PIN
+  if (_timer == 1) Timer1.restart();
 #endif
 }
 
 
-#ifdef USETIMER0
+#if USETIMER0
 #ifdef TIMER0_COMPA_vect
 ISR(TIMER0_COMPA_vect)
 #else
 ISR(TIM0_COMPA_vect)
 #endif
 {
-  Dot5x7.displayRow();
+  if (Dot5x7.getTimer() == 0) Dot5x7.displayRow();
 }
 #endif
 
 void DotMatrix5x7::setFramesPerSecond(int fps)
 {
    _period = 1000000UL/(fps*NUMROWS);
-#ifdef USETIMER0
-   OCR0A = 0xAF;
+#if USETIMER0
+   if (_timer == 0) {
+     OCR0A = 0xAF;
 #ifdef TIMSK0
-   TIMSK0 |= _BV(OCIE0A); // deactivate compare interrupt of Timer0
+     TIMSK0 |= _BV(OCIE0A); // activate compare interrupt of Timer0
 #else
-   TIMSK |= _BV(OCIE0A); // activate compare interrupt that triggers in the middle of a cycle
+     TIMSK |= _BV(OCIE0A); // activate compare interrupt that triggers in the middle of a cycle
 #endif
-#else
-  Timer1.initialize(_period);
-  Timer1.attachInterrupt(displayRow);
+   }
+#endif
+#ifdef TIMER1_A_PIN
+     if (_timer == 1) {
+       Timer1.initialize(_period);
+       Timer1.attachInterrupt(displayRow);
+     }
 #endif
 }
 
