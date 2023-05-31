@@ -7,9 +7,9 @@
 
 Drive a single 5x7 dot matrix display directly by Arduino pins (12 needed!)
 
-Version: 1.5.0
+Version: 1.5.2
 
-Date:  29.05.2023
+Date:  31.05.2023
 
 ## Features
 

@@ -1,3 +1,12 @@
+Version 1.5.2 (31.5.2023)
+Changed sleep and wakeup methods so that they now switch all pins to
+input instead of pulling them to ground, which led to excessive
+current consumption on a 1634.
+
+Version 1.5.1 (30.5.2023)
+Fixed clear method, which did something unexpected when a non-standard
+font was activated.
+
 Version 1.5.0 (29.5.2023)
 TIMER0 is now the default interrupt source. Added a default parameter to the
 begin method for selecting the appropriate timer interrupt. In order

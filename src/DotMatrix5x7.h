@@ -73,6 +73,7 @@ class DotMatrix5x7 {
   static void displayRow(void);
 
  private:
+  void initMatrix(void);
   void showStringWorker(char const *str, int ontime, int offtime, bool flash);
   void scrollDisplayDown(byte curr, byte next, byte offset, byte step);
   void scrollDisplayUp(byte curr, byte next, byte offset, byte step);

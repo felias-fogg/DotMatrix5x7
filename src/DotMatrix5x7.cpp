@@ -31,7 +31,17 @@ void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, 
   _rowpin[4] = row5;
   _rowpin[5] = row6;
   _rowpin[6] = row7;
-  for (byte r=0; r < NUMROWS; r++) {
+  initMatrix();
+  _currrow = 0;
+  setFont(font5x7);
+  for (_currrow = 0; _currrow < NUMROWS; _currrow++) _row[_currrow] = 0;
+  _currrow = 0;
+  setFramesPerSecond(50);
+}
+
+void DotMatrix5x7::initMatrix(void)
+{
+ for (byte r=0; r < NUMROWS; r++) {
     pinMode(_rowpin[r], OUTPUT);
     digitalWrite(_rowpin[r], !_rowactive);
   }
@@ -39,12 +49,8 @@ void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, 
     pinMode(_colpin[c], OUTPUT);
     digitalWrite(_colpin[c],  !_columnactive);
   }
-  _currrow = 0;
-  setFont(font5x7);
-  for (_currrow = 0; _currrow < NUMROWS; _currrow++) _row[_currrow] = 0;
-  _currrow = 0;
-  setFramesPerSecond(50);
 }
+
 
 void DotMatrix5x7::begin(byte col1, byte col2, byte col3, byte col4, byte col5, byte row1, byte row2, byte row3,
 			 byte row4, byte row5, byte row6, byte row7, byte rowactive, byte columnactive, byte timer)
@@ -92,12 +98,13 @@ void DotMatrix5x7::sleep(void)
 #ifdef TIMER1_A_PIN
    if (_timer == 1) Timer1.stop();
 #endif
-   for (byte c=0; c < NUMCOLS; c++) digitalWrite(_colpin[c], !_columnactive);
-   for (byte r=0; r < NUMROWS; r++) digitalWrite(_rowpin[r], !_rowactive);
+   for (byte c=0; c < NUMCOLS; c++) pinMode(_colpin[c], INPUT);
+   for (byte r=0; r < NUMROWS; r++) pinMode(_rowpin[r], INPUT);
 }
 
 void DotMatrix5x7::wakeup(void)
 {
+  initMatrix();
 #if USETIMER0
   if (_timer == 0) {
 #ifdef TIMSK0
@@ -153,7 +160,9 @@ void DotMatrix5x7::setBlinkFrames(int blinkon, int blinkoff)
 
 void DotMatrix5x7::clear(void)
 {
-  show(' ');
+  _blocked = true;
+  for (byte i=0; i < NUMROWS; i++) _row[i] = 0;
+  _blocked = false;
 }
 
 void DotMatrix5x7::show(byte c)
