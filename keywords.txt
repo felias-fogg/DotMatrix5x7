@@ -6,6 +6,8 @@ setFramesPerSecond	KEYWORD2
 setUpsideDown	KEYWORD2
 setDelayFunction	KEYWORD2
 setBlinkFrames		KEYWORD2
+sleep	KEYWORD2
+wakeup	KEYWORD2
 clear	KEYWORD2
 show	KEYWORD2
 showString	KEYWORD2
